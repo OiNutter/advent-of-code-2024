@@ -13,10 +13,10 @@ defmodule AdventOfCode.Input do
   cache, it will be retrieved from the server if `allow_network?: true` is
   configured and your cookie is setup.
   """
-  def get!(day, year) do
+  def get!(day, year, example) do
     cond do
-      in_cache?(day, year) ->
-        from_cache!(day, year)
+      in_cache?(day, year, example) ->
+        from_cache!(day, year, example)
 
       allow_network?() ->
         download!(day, year)
@@ -33,8 +33,9 @@ defmodule AdventOfCode.Input do
   """
   def delete!(day, year), do: File.rm!(cache_path(day, year))
 
+  defp example_path(day, year), do: Path.join(cache_dir(), "/#{year}/#{day}.aocinput.example")
   defp cache_path(day, year), do: Path.join(cache_dir(), "/#{year}/#{day}.aocinput")
-  defp in_cache?(day, year), do: File.exists?(cache_path(day, year))
+  defp in_cache?(day, year, example), do: File.exists?(if example, do: example_path(day, year), else: cache_path(day, year))
 
   defp store_in_cache!(day, year, input) do
     path = cache_path(day, year)
@@ -42,7 +43,9 @@ defmodule AdventOfCode.Input do
     :ok = File.write(path, input)
   end
 
-  defp from_cache!(day, year), do: File.read!(cache_path(day, year))
+  defp from_cache!(day, year, example) do
+    File.read!(if example, do: example_path(day, year), else: cache_path(day, year))
+   end
 
   defp download!(day, year) do
     HTTPoison.start()

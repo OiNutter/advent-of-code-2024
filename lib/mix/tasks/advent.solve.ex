@@ -12,6 +12,7 @@ defmodule Mix.Tasks.Advent.Solve do
   - `--year`, `-y`   Year. If omitted, defaults to current year (if it's December) or previous year (if it's another month)
   - `--part`, `-p`   Part number. Either 1 or 2. If omitted, both parts for that day will run.
   - `--bench`, `-b`  Run benchmarks.
+  - `--example`, `-e`  Run the example input instead of the puzzle input.
   """
 
   @shortdoc "Runs an Advent of Code puzzle solution"
@@ -23,11 +24,12 @@ defmodule Mix.Tasks.Advent.Solve do
             year: integer,
             day: 1..25,
             part: 1 | 2 | :both,
-            bench: boolean
+            bench: boolean,
+            example: boolean
           }
 
     @enforce_keys [:year, :day]
-    defstruct @enforce_keys ++ [part: :both, bench: false]
+    defstruct @enforce_keys ++ [part: :both, bench: false, example: false]
 
     @spec parse(list(String.t())) :: {:ok, t()} | :error
     def parse(raw_args) do
@@ -71,8 +73,8 @@ defmodule Mix.Tasks.Advent.Solve do
 
     defp opts do
       [
-        aliases: [y: :year, d: :day, p: :part, b: :bench],
-        strict: [year: :integer, day: :integer, part: :integer, bench: :boolean]
+        aliases: [y: :year, d: :day, p: :part, b: :bench, e: :example],
+        strict: [year: :integer, day: :integer, part: :integer, bench: :boolean, example: :boolean],
       ]
     end
 
@@ -86,7 +88,7 @@ defmodule Mix.Tasks.Advent.Solve do
   def run(raw_args) do
     with {:ok, args} <- Args.parse(raw_args),
          {:ok, module} <- fetch_solution_module(args) do
-      input = AdventOfCode.Input.get!(args.day, args.year)
+      input = AdventOfCode.Input.get!(args.day, args.year, args.example)
 
       setting_combo_id = get_setting_combo_id(args, shared_parse?(module))
 
