@@ -30,3 +30,6 @@ advent_of_code-*.tar
 
 # Detritus left behind by macOS Finder
 .DS_Store
+
+# downloaded puzzle inputs
+inputs
