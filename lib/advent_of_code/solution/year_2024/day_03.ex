@@ -13,7 +13,7 @@ defmodule AdventOfCode.Solution.Year2024.Day03 do
   end
 
   def part2(input) do
-    {_, results} = input
+    {_, result} = input
     |> String.split("\n", trim: true)
     |> Enum.flat_map(fn line ->
       Regex.scan(~r/mul\([0-9]{1,3},[0-9]{1,3}\)|do\(\)|don't\(\)/, line)
@@ -21,22 +21,21 @@ defmodule AdventOfCode.Solution.Year2024.Day03 do
         List.first(instruction)
       end)
     end)
-    |> Enum.reduce({true, [0]}, fn instruction, {do_sums, results} ->
+    |> Enum.reduce({true, 0}, fn instruction, {do_sums, result} ->
       case instruction do
-        "do()" -> {true, results}
-        "don't()" -> {false, results}
+        "do()" -> {true, result}
+        "don't()" -> {false, result}
         _ ->
           if do_sums do
             [a, b] = Regex.scan(~r/([0-9]{1,3})/, instruction, capture: :first)
             prod = String.to_integer(List.first(a)) * String.to_integer(List.first(b))
-            {true, results ++ [prod]}
+            {true, result + prod}
           else
-            {do_sums, results}
+            {do_sums, result}
           end
       end
     end)
-    IO.inspect(results)
-    results
-    |> Enum.sum()
+    result
   end
+
 end
