@@ -22,6 +22,7 @@ defmodule AdventOfCode.Solution.Year2024.Day06 do
 
   end
 
+  @spec turn_guard({-1 | 0 | 1, -1 | 0 | 1}) :: {-1 | 0 | 1, -1 | 0 | 1}
   def turn_guard(delta) do
     case delta do
       {0,-1} -> {1, 0}
@@ -75,9 +76,9 @@ defmodule AdventOfCode.Solution.Year2024.Day06 do
     start = find_start(map)
     start_delta = get_delta(Map.get(map, start))
 
-    map
-    |> Map.put(start, ".")
-    |> Enum.reduce(0, fn {k, v}, count ->
+    move_guard(start, Map.put(map, start,"."), MapSet.new([start]), get_delta(Map.get(map, start)))
+    |> Enum.reduce(0, fn k, count ->
+      v = Map.get(map, k, ".")
       if v === "." do
         returned = move_guard(start, Map.put(Map.put(map, k, "#"), start, "."), MapSet.new([{start, start_delta}]), start_delta, true)
         count + returned
