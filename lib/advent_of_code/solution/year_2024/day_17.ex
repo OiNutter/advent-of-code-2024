@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day17 do
+  import Bitwise
+  use AdventOfCode.Solution.SharedParse
+
   def get_combo_operand(operand, registers) do
     case operand do
       4 -> Map.fetch!(registers, :A)
@@ -15,7 +18,7 @@ defmodule AdventOfCode.Solution.Year2024.Day17 do
         {Map.update!(
            registers,
            :A,
-           &trunc(&1 / Integer.pow(2, get_combo_operand(operand, registers)))
+           &trunc(&1 >>> get_combo_operand(operand, registers))
          ), output}
 
       1 ->
@@ -34,14 +37,14 @@ defmodule AdventOfCode.Solution.Year2024.Day17 do
       6 ->
         {Map.update!(registers, :B, fn _ ->
            trunc(
-             Map.fetch!(registers, :A) / Integer.pow(2, get_combo_operand(operand, registers))
+             Map.fetch!(registers, :A) >>> get_combo_operand(operand, registers)
            )
          end), output}
 
       7 ->
         {Map.update!(registers, :C, fn _ ->
            trunc(
-             Map.fetch!(registers, :A) / Integer.pow(2, get_combo_operand(operand, registers))
+             Map.fetch!(registers, :A) >>> get_combo_operand(operand, registers)
            )
          end), output}
     end
@@ -81,15 +84,11 @@ defmodule AdventOfCode.Solution.Year2024.Day17 do
   end
 
   def parse_program(program) do
-    {instructions, operands} =
-      program
+    program
       |> String.replace("Program: ", "")
       |> String.split(",", trim: true)
       |> Enum.map(&String.to_integer/1)
-      |> Enum.with_index()
-      |> Enum.split_with(fn {_, i} -> rem(i, 2) === 0 end)
 
-    {instructions |> Enum.map(fn {v, _} -> v end), operands |> Enum.map(fn {v, _} -> v end)}
   end
 
   def parse(input) do
@@ -101,25 +100,31 @@ defmodule AdventOfCode.Solution.Year2024.Day17 do
     {parse_registers(registers), parse_program(program)}
   end
 
-  def part1(input) do
-    {registers, {instructions, operands}} = parse(input)
+  defp split_program(program) do
+    {instructions, operands} = program
+    |> Stream.with_index
+    |> Enum.reduce({[], []}, fn {op, i}, {instructions, operands} ->
+      if rem(i, 2) === 0 do
+        {[op | instructions], operands}
+      else
+        {instructions, [op | operands]}
+      end
+    end)
 
+    {instructions |> Enum.reverse(), operands |> Enum.reverse()}
+  end
+
+  def part1({registers, program}) do
+    {instructions, operands} = split_program(program)
     run_program(instructions, operands, registers, 0, [])
     |> Enum.reverse()
     |> Enum.join(",")
   end
 
-  def part2(input) do
-    [registers, original_program] =
-      input
-      |> String.trim()
-      |> String.split("\n\n", trim: true)
+  def part2({registers, program}) do
 
-    registers = parse_registers(registers)
-    {instructions, operands} = parse_program(original_program)
-
-    expected = String.replace(original_program, "Program: ", "") |> String.split(",", trim: true) |> Enum.map(&String.to_integer/1) |> Enum.reverse()
-
+    expected = program |> Enum.reverse()
+    {instructions, operands} = split_program(program)
     {valid, _} = 0..length(expected)-1
     |> Enum.reduce({[], 0..7 |> Range.to_list()}, fn i, {_, queue} ->
       valid = queue
