@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day14 do
+
+  use AdventOfCode.Solution.SharedParse
+
   def parse_robot(line) do
     %{"p" => p, "v" => v} = Regex.named_captures(~r/p=(?<p>.+) v=(?<v>.+)/, line)
 
@@ -8,10 +11,13 @@ defmodule AdventOfCode.Solution.Year2024.Day14 do
     }
   end
 
-  def part1(input) do
-    robots = input
+  def parse(input) do
+    input
     |> String.split("\n", trim: true)
     |> Enum.map(&parse_robot/1)
+  end
+
+  def part1(robots) do
 
     max_x = 101#11
     max_y = 103#7
@@ -21,8 +27,7 @@ defmodule AdventOfCode.Solution.Year2024.Day14 do
 
     robots
     |> Enum.map(fn {p, {vx, vy}} ->
-     # IO.inspect("===")
-      #IO.inspect({p, {vx, vy}})
+
       Enum.reduce(1..100, p, fn _, {px, py} ->
         new_x = px + vx
         new_y = py + vy
@@ -33,7 +38,6 @@ defmodule AdventOfCode.Solution.Year2024.Day14 do
         new_y = if new_y < 0, do: max_y + new_y, else: new_y
         new_y = if new_y >= max_y, do: 0 + (new_y - max_y), else: new_y
 
-        #IO.inspect({new_x, new_y})
         {new_x, new_y}
       end)
     end)
@@ -52,10 +56,7 @@ defmodule AdventOfCode.Solution.Year2024.Day14 do
 
   end
 
-  def part2(input) do
-    robots = input
-    |> String.split("\n", trim: true)
-    |> Enum.map(&parse_robot/1)
+  def part2(robots) do
 
     max_x = 101#11
     max_y = 103#7

@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day12 do
+
+  use AdventOfCode.Solution.SharedParse
+
   def calculate_perimeter([]), do: 0
   def calculate_perimeter(region) when length(region) === 1, do: 4
 
@@ -137,28 +140,25 @@ defmodule AdventOfCode.Solution.Year2024.Day12 do
     end)
   end
 
-  def part1(input) do
-    map =
-      input
-      |> parse_map()
+  def parse(input) do
+    map = input
+    |> parse_map()
 
     map
     |> find_regions()
     |> find_borders(map)
+  end
+
+  def part1(map) do
+    map
     |> Enum.reduce([], fn {_, v}, regions -> regions ++ v end)
     |> Enum.reduce(0, fn region, cost ->
       cost + MapSet.size(region.coords) * MapSet.size(region.borders)
     end)
   end
 
-  def part2(input) do
-    map =
-      input
-      |> parse_map()
-
+  def part2(map) do
     map
-    |> find_regions()
-    |> find_borders(map)
     |> Task.async_stream(fn {plot, regions} ->
         {
           plot,

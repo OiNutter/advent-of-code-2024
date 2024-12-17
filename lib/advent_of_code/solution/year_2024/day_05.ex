@@ -1,4 +1,6 @@
 defmodule AdventOfCode.Solution.Year2024.Day05 do
+  use AdventOfCode.Solution.SharedParse
+
   def get_rules_map(rules) do
     rules
     |> String.split("\n", trim: true)
@@ -39,16 +41,19 @@ defmodule AdventOfCode.Solution.Year2024.Day05 do
       if pages == sorted , do: want_correct, else: !want_correct
   end
 
-  def part1(input) do
-    [rules, updates] =
-      input
+  def parse(input) do
+      [rules, updates] = input
       |> String.split("\n\n", trim: true, parts: 2)
 
-    rules_map = get_rules_map(rules)
+      rules_map = get_rules_map(rules)
 
+      {rules_map, updates}
+  end
+
+  def part1({rules, updates}) do
     updates
     |> String.split("\n", trim: true)
-    |> Enum.filter(fn line -> check_correct(line, rules_map) end)
+    |> Enum.filter(fn line -> check_correct(line, rules) end)
     |> Enum.map(fn update ->
       pages =
         String.split(update, ",", trim: true)
@@ -59,21 +64,16 @@ defmodule AdventOfCode.Solution.Year2024.Day05 do
     |> Enum.sum()
   end
 
-  def part2(input) do
-    [rules, updates] =
-      input
-      |> String.split("\n\n", trim: true, parts: 2)
-
-    rules_map = get_rules_map(rules)
+  def part2({rules, updates}) do
 
     updates
     |> String.split("\n", trim: true)
-    |> Enum.filter(fn line -> check_correct(line, rules_map, false) end)
+    |> Enum.filter(fn line -> check_correct(line, rules, false) end)
     |> Enum.map(fn update ->
       pages =
         String.split(update, ",", trim: true)
 
-      get_sorted(pages, rules_map)
+      get_sorted(pages, rules)
       |> Enum.map(&String.to_integer/1)
     end)
     |> Enum.map(&get_middle/1)

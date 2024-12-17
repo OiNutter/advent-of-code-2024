@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day16 do
+  alias AdventOfCode.Solution.SharedParse
+  use SharedParse
+
   defp forward(map, finish, score, current, direction, passed) do
     next = add(current, direction)
     if (not wall?(next, map)) and next !== finish and wall?(add(next, turn_left(direction)), map) and wall?(add(next, turn_right(direction)), map) do
@@ -102,19 +105,24 @@ defmodule AdventOfCode.Solution.Year2024.Day16 do
     {start, finish}
   end
 
-  def part1(input) do
+  def parse(input) do
     map = parse_input(input)
 
     {start, finish} = find_ends(map)
+
+    {map, start, finish}
+  end
+
+  def part1(input) do
+
+    {map,start, finish} = input
 
     :gb_sets.singleton({0, start, {1,0}, []})
     |> pathfind(finish, map, MapSet.new(), :nil)
   end
 
   def part2(input) do
-    map = parse_input(input)
-
-    {start, finish} = find_ends(map)
+    {map,start, finish} = input
 
     :gb_sets.singleton({0, start, {1,0}, []})
     |> pathfind(finish, map, MapSet.new(), :infinity)

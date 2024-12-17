@@ -1,5 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day06 do
 
+  use AdventOfCode.Solution.SharedParse
+
   def move_guard({start_x, start_y}, map, steps, {dx, dy}, check_loop \\ false) do
 
     next_square = {start_x + dx, start_y + dy}
@@ -61,19 +63,20 @@ defmodule AdventOfCode.Solution.Year2024.Day06 do
     |> elem(0)
   end
 
-  def part1(input) do
+  def parse(input) do
     map = get_map(input)
 
     start = find_start(map)
 
+    {map, start}
+  end
+
+  def part1({map, start}) do
     move_guard(start, Map.put(map, start,"."), MapSet.new([start]), get_delta(Map.get(map, start)))
     |> MapSet.size()
   end
 
-  def part2(input) do
-    map = get_map(input)
-
-    start = find_start(map)
+  def part2({map, start}) do
     start_delta = get_delta(Map.get(map, start))
 
     move_guard(start, Map.put(map, start,"."), MapSet.new([start]), get_delta(Map.get(map, start)))

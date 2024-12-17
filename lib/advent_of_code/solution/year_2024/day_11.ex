@@ -1,4 +1,5 @@
 defmodule AdventOfCode.Solution.Year2024.Day11 do
+  use AdventOfCode.Solution.SharedParse
 
   def change_stone("0"), do: ["1"]
   def change_stone(stone) do
@@ -24,10 +25,12 @@ defmodule AdventOfCode.Solution.Year2024.Day11 do
     |> String.split(" ", trim: true)
   end
 
-  def part1(input) do
-    stones = parse_input(input)
+  def parse(input) do
+    parse_input(input)
     |> Enum.reduce(%{}, fn stone, stones -> Map.update(stones, stone, 1, &(&1 + 1)) end)
+  end
 
+  def part1(stones) do
     1..25
     |> Enum.reduce(stones, fn _, stones -> blink(stones) end)
     |> Map.values()
@@ -35,10 +38,7 @@ defmodule AdventOfCode.Solution.Year2024.Day11 do
 
   end
 
-  def part2(input) do
-    stones = parse_input(input)
-    |> Enum.reduce(%{}, fn stone, stones -> Map.update(stones, stone, 1, &(&1 + 1)) end)
-
+  def part2(stones) do
     1..75
     |> Enum.reduce(stones, fn _, stones -> blink(stones) end)
     |> Map.values()

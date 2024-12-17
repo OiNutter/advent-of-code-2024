@@ -1,5 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day01 do
+  use AdventOfCode.Solution.SharedParse
 
+  @spec get_pairs(binary()) :: {list(), list()}
   def get_pairs(input) do
     {left, right} = input
     |> String.split("\n", trim: true)
@@ -11,8 +13,11 @@ defmodule AdventOfCode.Solution.Year2024.Day01 do
     {Enum.sort(left), Enum.sort(right)}
   end
 
-  def part1(input) do
-    {left, right} = get_pairs(input)
+  def parse(input) do
+    get_pairs(input)
+  end
+
+  def part1({left, right}) do
 
     left
     |> Enum.with_index()
@@ -23,8 +28,7 @@ defmodule AdventOfCode.Solution.Year2024.Day01 do
     |> Enum.sum()
   end
 
-  def part2(input) do
-    {left, right} = get_pairs(input)
+  def part2({left, right}) do
 
     left
     |> Enum.map(fn d ->
