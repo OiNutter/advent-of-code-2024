@@ -23,7 +23,6 @@ defmodule AdventOfCode.Solution.Year2024.Day22 do
     |> Enum.map(&String.to_integer/1)
   end
 
-  @spec part1(any()) :: nil
   def part1(numbers) do
     numbers
     |> Enum.map(fn n ->
