@@ -168,10 +168,12 @@ defmodule Mix.Tasks.Advent.Solve do
   end
 
   defp run_benchmarks(benchmarks) do
+    Application.ensure_all_started(:memoize)
     Benchee.run(benchmarks, print: [configuration: false])
   end
 
   defp run_and_print_result(module, part, input) do
+    Application.ensure_all_started(:memoize)
     result = apply(module, :"part#{part}", [input])
     print_solution(result, "Part #{part} Result")
   end
