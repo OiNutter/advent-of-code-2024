@@ -24,7 +24,8 @@ defmodule AdventOfCode.MixProject do
       {:httpoison, "~> 2.0"},
       {:benchee, "~> 1.3"},
       {:tz, "~> 0.26.5"},
-      {:memoize, "~> 1.4.3"}
+      {:memoize, "~> 1.4.3"},
+      {:combination, "~> 0.0.3"}
     ]
   end
 end
