@@ -22,20 +22,11 @@ defmodule AdventOfCode.Solution.Year2024.Day12 do
       # right side
       found_sides = if !Enum.member?(region, {x + 1, y}), do: found_sides + 1, else: found_sides
 
-      if x === 110 && y === 108 do
-        IO.inspect(found_sides)
-        IO.inspect(Enum.find_index(region, fn {nx, ny} -> nx === x && ny === y - 1 end))
-        IO.inspect(Enum.member?(region, {x, y - 1}))
-      end
-
       sides + found_sides
     end)
   end
 
   def build_region({x, y}, char, map, squares) do
-    if x === 111 && y === 107 do
-      IO.inspect(Map.get(map, {x, y}))
-    end
 
     if !Map.get(map, {x, y}) || Map.get(map, {x, y}) !== char || Enum.member?(squares, {x, y}) do
       squares

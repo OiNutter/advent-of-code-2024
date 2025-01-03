@@ -5,9 +5,12 @@ defmodule AdventOfCode.Solution.Year2024.Day01 do
   def get_pairs(input) do
     {left, right} = input
     |> String.split("\n", trim: true)
-    |> Enum.map(&String.split/1)
+    |> Enum.map(fn line ->
+      line
+      |> String.split(" ", trim: true)
+      |> Enum.map(&String.to_integer/1)
+    end)
     |> Enum.map(&List.to_tuple/1)
-    |> Enum.map(fn {a, b} -> {String.to_integer(a), String.to_integer(b)} end)
     |> Enum.unzip()
 
     {Enum.sort(left), Enum.sort(right)}
@@ -20,9 +23,9 @@ defmodule AdventOfCode.Solution.Year2024.Day01 do
   def part1({left, right}) do
 
     left
-    |> Enum.with_index()
-    |> Enum.map(fn {d, i} ->
-      Enum.at(right, i) - d
+    |> Enum.zip(right)
+    |> Enum.map(fn {l, r} ->
+      r - l
       |> abs()
     end)
     |> Enum.sum()

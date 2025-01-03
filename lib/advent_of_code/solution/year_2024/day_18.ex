@@ -85,11 +85,12 @@ defmodule AdventOfCode.Solution.Year2024.Day18 do
         if path === :no_path do
           {:cont, {ceil((index-last)/2), :nil, index}}
         else
-          map = Map.put(map, Enum.at(to_check, index), :byte)
+          coord = Enum.at(to_check, index)
+          map = Map.put(map, coord, :byte)
           path = find_path(start, map, {max_x, max_y})
 
           if path === :no_path do
-            {:halt, {index, Enum.at(to_check, index), index}}
+            {:halt, {index, coord, index}}
           else
             {:cont, {index + ceil(abs(last-index)/2), :nil, index}}
           end

@@ -3,8 +3,9 @@ defmodule AdventOfCode.Solution.Year2024.Day11 do
 
   def change_stone("0"), do: ["1"]
   def change_stone(stone) do
-    if rem(String.length(stone), 2) == 0 do
-      String.split_at(stone, trunc(String.length(stone)/2)) |> Tuple.to_list() |> Enum.map(fn a -> String.to_integer(a) |> Integer.to_string() end)
+    stone_length = String.length(stone)
+    if rem(stone_length, 2) == 0 do
+      String.split_at(stone, trunc(stone_length/2)) |> Tuple.to_list() |> Enum.map(fn a -> String.to_integer(a) |> Integer.to_string() end)
     else
       [String.to_integer(stone) * 2024 |> Integer.to_string()]
     end

@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day10 do
+
+  use AdventOfCode.Solution.SharedParse
+
   def get_neighbours({x,y}, _, _), do: [{x-1,y}, {x+1,y}, {x,y-1}, {x,y+1}]
 
   def find_paths(map, ends, current_path, start, max_x, max_y) do
@@ -37,7 +40,7 @@ defmodule AdventOfCode.Solution.Year2024.Day10 do
 
   end
 
-  def get_map(input) do
+  def parse(input) do
     input
     |> String.split("\n", trim: true)
     |> Enum.with_index()
@@ -54,10 +57,9 @@ defmodule AdventOfCode.Solution.Year2024.Day10 do
       {map, max_x, max_y+1}
     end)
   end
-  def part1(input) do
-    {map, max_x, max_y} = get_map(input)
-
-    Enum.filter(map, fn {_, val} -> val === 0 end)
+  def part1({map, max_x, max_y}) do
+    map
+    |> Enum.filter(fn {_, val} -> val === 0 end)
     |> Enum.map(fn {key, _} ->
       find_paths(map, MapSet.new(), MapSet.new([key]), key, max_x, max_y)
       |> MapSet.size()
@@ -65,10 +67,9 @@ defmodule AdventOfCode.Solution.Year2024.Day10 do
     |> Enum.sum()
   end
 
-  def part2(input) do
-    {map, max_x, max_y} = get_map(input)
-
-    Enum.filter(map, fn {_, val} -> val === 0 end)
+  def part2({map, max_x, max_y}) do
+    map
+    |> Enum.filter(fn {_, val} -> val === 0 end)
     |> Enum.map(fn {key, _} ->
       find_distinct_paths(map, MapSet.new(), MapSet.new([key]), key, max_x, max_y)
       |> MapSet.size()

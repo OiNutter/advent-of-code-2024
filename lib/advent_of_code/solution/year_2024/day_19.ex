@@ -2,8 +2,9 @@ defmodule AdventOfCode.Solution.Year2024.Day19 do
   use AdventOfCode.Solution.SharedParse
 
   use Agent
+  use Memoize
 
-  defp check_design(design, patterns) do
+  defmemop check_design(design, patterns) do
     patterns
       |> Enum.reduce_while(false, fn pattern, _ ->
         if design === pattern do

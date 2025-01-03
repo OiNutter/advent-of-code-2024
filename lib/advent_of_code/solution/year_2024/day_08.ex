@@ -1,4 +1,7 @@
 defmodule AdventOfCode.Solution.Year2024.Day08 do
+
+  use AdventOfCode.Solution.SharedParse
+
   def add_antinode(antinodes, {start_x, start_y}, {dx, dy}, max_x, max_y) do
     x = start_x + dx
     y = start_y + dy
@@ -10,8 +13,7 @@ defmodule AdventOfCode.Solution.Year2024.Day08 do
     end
   end
 
-  def part1(input) do
-
+  def parse(input) do
     max_y = Enum.count(input |> String.split("\n", trim: true))
     max_x = input |> String.split("\n", trim: true) |> List.first() |> String.length()
 
@@ -20,17 +22,22 @@ defmodule AdventOfCode.Solution.Year2024.Day08 do
     |> Enum.with_index()
     |> Enum.reduce(%{}, fn {line, y}, map ->
       line
-      |> String.split("", trim: true)
+      |> String.to_charlist()
       |> Enum.with_index()
       |> Enum.reduce(map, fn {node, x}, map ->
         Map.put(map, {x,y}, node)
       end)
     end)
 
+    {map, {max_x, max_y}}
+  end
+
+  def part1({map, {max_x, max_y}}) do
+
     # find antinodes
     map
     |> Enum.reduce([], fn {{x,y}, node}, antinodes ->
-      if Regex.match?(~r/[A-Z0-9]/i, node) do
+      if node !== ?. do
         # find matching frequencies
         new_nodes = map
         |> Enum.filter(fn {{x2, y2}, node2} -> node2 === node && x2 !== x && y2 !== y end)
@@ -54,27 +61,12 @@ defmodule AdventOfCode.Solution.Year2024.Day08 do
     |> MapSet.size()
   end
 
-  def part2(input) do
-
-    max_y = Enum.count(input |> String.split("\n", trim: true))
-    max_x = input |> String.split("\n", trim: true) |> List.first() |> String.length()
-
-    map = input
-    |> String.split("\n", trim: true)
-    |> Enum.with_index()
-    |> Enum.reduce(%{}, fn {line, y}, map ->
-      line
-      |> String.split("", trim: true)
-      |> Enum.with_index()
-      |> Enum.reduce(map, fn {node, x}, map ->
-        Map.put(map, {x,y}, node)
-      end)
-    end)
+  def part2({map, {max_x, max_y}}) do
 
     # find antinodes
     map
     |> Enum.reduce([], fn {{x,y}, node}, antinodes ->
-      if Regex.match?(~r/[A-Z0-9]/i, node) do
+      if node !== ?. do
         # find matching frequencies
         new_nodes = map
         |> Enum.filter(fn {{x2, y2}, node2} -> node2 === node && x2 !== x && y2 !== y end)

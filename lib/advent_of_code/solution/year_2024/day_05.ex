@@ -31,14 +31,12 @@ defmodule AdventOfCode.Solution.Year2024.Day05 do
     end)
   end
 
-  def check_correct(line, rules_map, want_correct \\ true) do
+  def check_correct(line, rules_map) do
       pages =
         line
         |> String.split(",", trim: true)
 
-      sorted = get_sorted(pages, rules_map)
-
-      if pages == sorted , do: want_correct, else: !want_correct
+      pages == get_sorted(pages, rules_map)
   end
 
   def parse(input) do
@@ -55,11 +53,9 @@ defmodule AdventOfCode.Solution.Year2024.Day05 do
     |> String.split("\n", trim: true)
     |> Enum.filter(fn line -> check_correct(line, rules) end)
     |> Enum.map(fn update ->
-      pages =
         String.split(update, ",", trim: true)
         |> Enum.map(&String.to_integer/1)
-
-      get_middle(pages)
+        |> get_middle()
     end)
     |> Enum.sum()
   end
@@ -68,7 +64,7 @@ defmodule AdventOfCode.Solution.Year2024.Day05 do
 
     updates
     |> String.split("\n", trim: true)
-    |> Enum.filter(fn line -> check_correct(line, rules, false) end)
+    |> Enum.reject(fn line -> check_correct(line, rules) end)
     |> Enum.map(fn update ->
       pages =
         String.split(update, ",", trim: true)

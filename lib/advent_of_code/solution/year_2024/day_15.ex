@@ -5,7 +5,7 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
     |> Enum.with_index()
     |> Enum.flat_map(fn {line, y} ->
       line
-      |> String.split("", trim: true)
+      |> String.to_charlist()
       |> Enum.with_index()
       |> Enum.map(fn {cell, x} -> {{x, y}, cell} end)
     end)
@@ -18,13 +18,13 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
     |> Enum.reduce({[], 0}, fn line, {acc, y} ->
       {row, _} =
         line
-        |> String.split("", trim: true)
+        |> String.to_charlist()
         |> Enum.reduce({[], 0}, fn cell, {acc, x} ->
           case cell do
-            "#" -> {acc ++ [{{x, y}, "#"}, {{x + 1, y}, "#"}], x + 2}
-            "O" -> {acc ++ [{{x, y}, "["}, {{x + 1, y}, "]"}], x + 2}
-            "@" -> {acc ++ [{{x, y}, "@"}, {{x + 1, y}, "."}], x + 2}
-            _ -> {acc ++ [{{x, y}, "."}, {{x+1, y}, "."}], x + 2}
+            ?# -> {acc ++ [{{x, y}, ?#}, {{x + 1, y}, ?\#}], x + 2}
+            ?O -> {acc ++ [{{x, y}, ?[}, {{x + 1, y}, ?]}], x + 2}
+            ?@ -> {acc ++ [{{x, y}, ?@}, {{x + 1, y}, ?.}], x + 2}
+            _ -> {acc ++ [{{x, y}, ?.}, {{x+1, y}, ?.}], x + 2}
           end
         end)
 
@@ -38,8 +38,8 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
 
   def parse_instructions(instructions) do
     instructions
-    |> String.split("\n", trim: true)
-    |> Enum.flat_map(&String.split(&1, "", trim: true))
+    |> String.replace("\n", "")
+    |> String.to_charlist()
   end
 
   def parse_input(input, double_size \\ false) do
@@ -52,19 +52,19 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
 
   def move(map, {x, y}, {dx, dy}, char) do
     {new_x, new_y} = {x + dx, y + dy}
-    new_cell = Map.get(map, {new_x, new_y}, "#")
+    new_cell = Map.get(map, {new_x, new_y}, ?#)
 
     case new_cell do
-      "#" ->
+      ?# ->
         {map, {x, y}}
 
-      "[" ->
-        {new_map, new_right_box} = move(map, {new_x + 1, new_y}, {dx, dy}, "]")
+      ?[ ->
+        {new_map, new_right_box} = move(map, {new_x + 1, new_y}, {dx, dy}, ?])
 
         if new_right_box == {new_x + 1, new_y} do
           {map, {x, y}}
         else
-          {new_map, new_box} = move(new_map, {new_x, new_y}, {dx, dy}, "[")
+          {new_map, new_box} = move(new_map, {new_x, new_y}, {dx, dy}, ?[)
 
           if new_box == {new_x, new_y} do
             {map, {x, y}}
@@ -75,38 +75,38 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
             }
           end
         end
-      "]" ->
-        {new_map, new_left_box} = move(map, {new_x - 1, new_y}, {dx, dy}, "[")
+      ?] ->
+        {new_map, new_left_box} = move(map, {new_x - 1, new_y}, {dx, dy}, ?[)
 
         if new_left_box == {new_x - 1, new_y} do
           {map, {x, y}}
         else
-          {new_map, new_box} = move(new_map, {new_x, new_y}, {dx, dy}, "]")
+          {new_map, new_box} = move(new_map, {new_x, new_y}, {dx, dy}, ?])
 
           if new_box == {new_x, new_y} do
             {map, {x, y}}
           else
             {
-              Map.put(new_map, {x, y}, ".") |> Map.put({new_x, new_y}, char),
+              Map.put(new_map, {x, y}, ?.) |> Map.put({new_x, new_y}, char),
               {new_x, new_y}
             }
           end
         end
-      "O" ->
-        {new_map, new_box} = move(map, {new_x, new_y}, {dx, dy}, "O")
+      ?O ->
+        {new_map, new_box} = move(map, {new_x, new_y}, {dx, dy}, ?O)
 
         if new_box == {new_x, new_y} do
           {map, {x, y}}
         else
           {
-            Map.put(new_map, {x, y}, ".") |> Map.put({new_x, new_y}, char),
+            Map.put(new_map, {x, y}, ?.) |> Map.put({new_x, new_y}, char),
             {new_x, new_y}
           }
         end
 
       _ ->
         {
-          Map.put(map, {x, y}, ".") |> Map.put({new_x, new_y}, char),
+          Map.put(map, {x, y}, ?.) |> Map.put({new_x, new_y}, char),
           {new_x, new_y}
         }
     end
@@ -116,23 +116,23 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
     {map, instructions} = parse_input(input)
 
     robot_start =
-      Enum.find(map, fn {_, cell} -> cell == "@" end)
+      Enum.find(map, fn {_, cell} -> cell == ?@ end)
       |> elem(0)
 
     {updated_map, _} =
       instructions
       |> Enum.reduce({map, robot_start}, fn instruction, {map, robot_start} ->
         case instruction do
-          "^" -> move(map, robot_start, {0, -1}, "@")
-          "v" -> move(map, robot_start, {0, 1}, "@")
-          "<" -> move(map, robot_start, {-1, 0}, "@")
-          ">" -> move(map, robot_start, {1, 0}, "@")
+          ?^ -> move(map, robot_start, {0, -1}, ?@)
+          ?v -> move(map, robot_start, {0, 1}, ?@)
+          ?< -> move(map, robot_start, {-1, 0}, ?@)
+          ?> -> move(map, robot_start, {1, 0}, ?@)
           _ -> {map, robot_start}
         end
       end)
 
     updated_map
-    |> Map.filter(fn {_, cell} -> cell == "O" end)
+    |> Map.filter(fn {_, cell} -> cell == ?O end)
     |> Enum.map(fn {{x, y}, _} -> x + 100 * y end)
     |> Enum.sum()
   end
@@ -141,23 +141,23 @@ defmodule AdventOfCode.Solution.Year2024.Day15 do
     {map, instructions} = parse_input(input, true)
 
     robot_start =
-      Enum.find(map, fn {_, cell} -> cell == "@" end)
+      Enum.find(map, fn {_, cell} -> cell == ?@ end)
       |> elem(0)
 
     {updated_map, _} =
       instructions
       |> Enum.reduce({map, robot_start}, fn instruction, {map, robot_start} ->
         case instruction do
-          "^" -> move(map, robot_start, {0, -1}, "@")
-          "v" -> move(map, robot_start, {0, 1}, "@")
-          "<" -> move(map, robot_start, {-1, 0}, "@")
-          ">" -> move(map, robot_start, {1, 0}, "@")
+          ?^ -> move(map, robot_start, {0, -1}, ?@)
+          ?v -> move(map, robot_start, {0, 1}, ?@)
+          ?< -> move(map, robot_start, {-1, 0}, ?@)
+          ?> -> move(map, robot_start, {1, 0}, ?@)
           _ -> {map, robot_start}
         end
       end)
 
     updated_map
-    |> Map.filter(fn {_, cell} -> cell == "[" end)
+    |> Map.filter(fn {_, cell} -> cell == ?[ end)
     |> Enum.map(fn {{x, y}, _} -> x + 100 * y end)
     |> Enum.sum()
   end

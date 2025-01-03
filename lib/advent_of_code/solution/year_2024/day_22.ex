@@ -1,6 +1,5 @@
 defmodule AdventOfCode.Solution.Year2024.Day22 do
   use AdventOfCode.Solution.SharedParse
-  use Memoize
 
   def mix(a, b) do
     Bitwise.bxor(a, b)
@@ -10,7 +9,7 @@ defmodule AdventOfCode.Solution.Year2024.Day22 do
     rem(a, 16_777_216)
   end
 
-  def generate_secret_number(n) do
+  defp generate_secret_number(n) do
     new_n = prune(mix(n * 64, n))
     new_n = prune(mix(floor(new_n / 32), new_n))
     prune(mix(new_n * 2048, new_n))

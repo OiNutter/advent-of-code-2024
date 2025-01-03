@@ -43,32 +43,36 @@ defmodule AdventOfCode.Solution.Year2024.Day20 do
   defp find_shortcuts(map, distances, max_cheating) do
     distances
     |> Enum.reduce(0, fn {{x, y}, cost}, acc ->
-      -max_cheating..max_cheating
-      |> Enum.reduce(acc, fn dy, acc ->
+      if cost <= 100 do
+        acc
+      else
         -max_cheating..max_cheating
-        |> Enum.reduce(acc, fn dx, acc ->
-          manhattan_distance = abs(dx) + abs(dy)
+        |> Enum.reduce(acc, fn dy, acc ->
+          -max_cheating..max_cheating
+          |> Enum.reduce(acc, fn dx, acc ->
+            manhattan_distance = abs(dx) + abs(dy)
 
-          if manhattan_distance <= max_cheating do
-            {new_x, new_y} = {x + dx, y + dy}
+            if manhattan_distance <= max_cheating and manhattan_distance > 0 do
+              {new_x, new_y} = {x + dx, y + dy}
 
-            if wall?({new_x, new_y}, map) do
-              acc
-            else
-              cost_2 = Map.get(distances, {new_x, new_y})
-
-              if cost_2 === nil do
+              if wall?({new_x, new_y}, map) do
                 acc
               else
-                saving = cost - cost_2 - manhattan_distance
-                if saving >= 100, do: acc + 1, else: acc
+                cost_2 = Map.get(distances, {new_x, new_y})
+
+                if cost_2 === nil do
+                  acc
+                else
+                  saving = cost - cost_2 - manhattan_distance
+                  if saving >= 100, do: acc + 1, else: acc
+                end
               end
+            else
+              acc
             end
-          else
-            acc
-          end
+          end)
         end)
-      end)
+      end
     end)
   end
 
