@@ -24,7 +24,7 @@ defmodule AdventOfCode.Solution.Year2023.Day01 do
         Enum.at(m, 1)
       end)
 
-      String.to_integer(~s(#{getValue(List.first(digits))}#{getValue(List.last((digits)))}))
+      String.to_integer(~s(#{getValue(hd(digits))}#{getValue(:lists.last(digits))}))
     end)
     |> Enum.sum()
 

@@ -119,10 +119,10 @@ defmodule AdventOfCode.Solution.Year2023.Day07 do
 
         true ->
           a.cards
-          |> Enum.with_index()
-          |> Enum.reduce_while(0, fn {card, i}, _ ->
-            a_score = get_card_score(card, wildcard)
-            b_score = get_card_score(Enum.at(b.cards, i), wildcard)
+          |> Enum.zip(b.cards)
+          |> Enum.reduce_while(0, fn {a_card, b_card}, _ ->
+            a_score = get_card_score(a_card, wildcard)
+            b_score = get_card_score(b_card, wildcard)
 
             cond do
               a_score < b_score ->
