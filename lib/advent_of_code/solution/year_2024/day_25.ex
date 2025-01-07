@@ -2,10 +2,8 @@ defmodule AdventOfCode.Solution.Year2024.Day25 do
 
   defp has_overlap?(lock, key) do
     key
-    |> Enum.zip(lock)
-    |> Enum.any?(fn {k, l} ->
-      k + l > 5
-    end)
+    |> Enum.zip_with(lock, fn a,b -> a + b > 5 end)
+    |> Enum.any?(&(&1))
   end
   def parse_group(group) do
     group
@@ -36,17 +34,12 @@ defmodule AdventOfCode.Solution.Year2024.Day25 do
     {locks, keys} = parse(input)
 
     locks
-    |> Enum.reduce(MapSet.new(), fn lock, combos ->
+    |> Enum.reduce(0, fn lock, count ->
       keys
-      |> Enum.reduce(combos, fn key, combos ->
-        if not has_overlap?(lock,key) do
-          MapSet.put(combos, {lock, key})
-        else
-          combos
-        end
+      |> Enum.reduce(count, fn key, count ->
+        if has_overlap?(lock,key), do: count, else: count + 1
       end)
     end)
-    |> MapSet.size()
   end
 
   def part2(_input) do
